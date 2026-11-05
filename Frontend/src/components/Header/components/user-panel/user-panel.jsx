@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Link } from 'react-router';
 import styled from 'styled-components';
+
 const UserPanelContainer = ({ className }) => {
 	return (
 		<div className={className}>
