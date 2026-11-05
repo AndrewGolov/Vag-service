@@ -80,8 +80,8 @@ h6 {
 	font-weight: 400;
 }
 #root {
-	width: 1126px;
-	max-width: 100%;
+	width: 100%;
 	min-height: 100svh;
+	margin: 0 auto;
 	box-sizing: border-box;
 }
