@@ -1,12 +1,14 @@
 import * as yup from 'yup';
 
-export const regFormSchema = yup.object().shape({
+export const registerFormSchema = yup.object().shape({
 	login: yup
 		.string()
-		.required('Введите Login')
+		.required('Введите логин')
 		.matches(/^\w+$/, 'Неверный логин. Допускаются только буквы и цифры')
 		.min(3, 'Логин должен быть не менее 3 символов')
-		.max(20, 'Логин должен быть не более 20 символов'),
+		.max(20, 'Логин должен быть не более 20 символов')
+		.trim('Логин не должен содержать пробелы'),
+
 	password: yup
 		.string()
 		.required('Введите пароль')

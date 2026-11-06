@@ -37,13 +37,13 @@ const LoginFormContainer = ({ className }) => {
 			<div className="form-fields">
 				<div className={`input-group ${errors.login ? 'invalid' : ''}`}>
 					<input type="text" placeholder=" " autoComplete="username" {...register('login')} />
-					<label>Login</label>
+					<label>Логин</label>
 					{errors.login && <p className="error-message">{errors.login.message}</p>}
 				</div>
 
 				<div className={`input-group ${errors.password ? 'invalid' : ''}`}>
 					<input type="password" placeholder=" " autoComplete="current-password" {...register('password')} />
-					<label>Password</label>
+					<label>Пароль</label>
 					{errors.password && <p className="error-message">{errors.password.message}</p>}
 				</div>
 			</div>

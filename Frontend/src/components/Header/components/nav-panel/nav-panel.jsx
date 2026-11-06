@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 const NavPanelContainer = ({ className }) => {
+	/*TODO добавить обработку меню*/
 	return (
 		<div className={className}>
 			<ul>

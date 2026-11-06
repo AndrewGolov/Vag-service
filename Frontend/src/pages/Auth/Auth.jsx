@@ -1,18 +1,25 @@
 /* eslint-disable react-refresh/only-export-components */
-
-import { LoginForm } from './components';
+import { useMatch } from 'react-router';
+import { LoginForm, RegisterForm } from './components';
 
 import styled from 'styled-components';
 
 const AuthContainer = ({ className }) => {
+	const isRegisterPage = useMatch('/register');
+
 	return (
 		<main className={className}>
 			<div className="background-decoration decoration-left" />
 			<div className="background-decoration decoration-right" />
-
-			<div className="login-wrapper">
-				<LoginForm />
-			</div>
+			{!isRegisterPage ? (
+				<div className="form-wrapper">
+					<LoginForm />
+				</div>
+			) : (
+				<div className="form-wrapper">
+					<RegisterForm />
+				</div>
+			)}
 
 			<div className="page-footer">
 				<span>VAG FAN SERVICE</span>
@@ -33,7 +40,7 @@ export const Auth = styled(AuthContainer)`
 	background: #101115;
 	overflow: hidden;
 
-	.login-wrapper {
+	.form-wrapper {
 		position: relative;
 		z-index: 2;
 		width: 100%;
