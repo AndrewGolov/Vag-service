@@ -1,5 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Link } from 'react-router';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { request } from '../../../../utils';
+import { setUser } from '../../../../actions';
 import { useForm } from 'react-hook-form';
 import { authFormSchema } from '../utils/auth-form-schema';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,6 +12,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import styled from 'styled-components';
 
 const LoginFormContainer = ({ className }) => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+	const [serverError, setServerError] = useState(null);
 	const {
 		register,
 		handleSubmit,
@@ -22,9 +30,23 @@ const LoginFormContainer = ({ className }) => {
 	});
 
 	const onSubmitForm = ({ login, password }) => {
-		/*TODO request('/api/login', 'POST', { login, password })*/
-		console.log('Form submitted with:', login, password);
-		reset();
+		setServerError(null);
+
+		if (!login || !password.trim()) return;
+
+		request('/api/login', 'POST', { login, password })
+			.then(({ error, user }) => {
+				if (error) {
+					setServerError(error);
+					return;
+				}
+				dispatch(setUser(user));
+				navigate('/account');
+				reset();
+			})
+			.catch((error) => {
+				setServerError(error.message);
+			});
 	};
 	return (
 		<form className={className} onSubmit={handleSubmit(onSubmitForm)}>
@@ -47,6 +69,7 @@ const LoginFormContainer = ({ className }) => {
 					{errors.password && <p className="error-message">{errors.password.message}</p>}
 				</div>
 			</div>
+			{serverError && <p className="server-error-message">{serverError}</p>}
 
 			<button type="submit">Войти</button>
 
@@ -222,6 +245,14 @@ export const LoginForm = styled(LoginFormContainer)`
 		&:active {
 			transform: translateY(-1px);
 		}
+	}
+
+	.server-error-message {
+		margin: 8px 0 0;
+		color: #ff5555;
+		font-size: 12px;
+		line-height: 1.4;
+		animation: error-appearance 0.25s ease both;
 	}
 
 	.form-footer {

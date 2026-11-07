@@ -4,7 +4,7 @@ const app = express();
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3001;
 
-const {register} = require('./controllers/user.js')
+const {register,login} = require('./controllers/user.js')
 const mapUser = require('./helpers/mapUser.js');
 
 
@@ -29,7 +29,17 @@ app.post("/api/register", async (req, res) => {
 		}
 		res.status(500).json({error: 'Ошибка регистрации, попробуйте позже'});
 	}
-
+})
+app.post("/api/login", async (req, res) => {
+	try {
+		const {user, token} = await login(req.body.login, req.body.password);
+		res
+			.cookie('vag_token', token, {httpOnly: true})
+			.send({error: null, user: mapUser(user)})
+	} catch (e) {
+		console.log(e.message, e.code)
+		res.status(500).json({error: e.message});
+	}
 })
 
 
