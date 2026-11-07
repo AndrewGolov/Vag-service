@@ -15,6 +15,10 @@ export const router = createBrowserRouter([
 		element: <Auth />,
 	},
 	{
+		path: '/account',
+		element: <div>Страница пользователя</div>,
+	},
+	{
 		path: '*',
 		element: <div>404 Page Not Found</div>,
 	},

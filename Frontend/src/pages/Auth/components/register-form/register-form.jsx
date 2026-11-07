@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { registerFormSchema } from '../utils';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,7 +11,9 @@ import { setUser } from '../../../../actions';
 import styled from 'styled-components';
 
 const RegisterFormContainer = ({ className }) => {
+	const [serverError, setServerError] = useState(null);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const {
 		register,
 		handleSubmit,
@@ -25,18 +28,26 @@ const RegisterFormContainer = ({ className }) => {
 		mode: 'onChange',
 	});
 
-	const onSubmitForm = async ({ login, password }) => {
+	const onSubmitForm = ({ login, password }) => {
+		setServerError(null);
+
 		if (!login || !password.trim()) return;
 
-		console.log(`Form submitted with login:'${login}'`);
-		console.log(`Form submitted with password:'${password}'`);
-		request('/api/register', 'POST', { login, password }).then((data) =>
-			// dispatch(setUser(data))
-			console.log(data),
-		);
-
-		reset();
+		request('/api/register', 'POST', { login, password })
+			.then(({ error, user }) => {
+				if (error) {
+					setServerError(error);
+					return;
+				}
+				dispatch(setUser(user));
+				navigate('/account');
+				reset();
+			})
+			.catch((error) => {
+				setServerError(error.message);
+			});
 	};
+
 	return (
 		<form className={className} onSubmit={handleSubmit(onSubmitForm)}>
 			<div className="form-header">
@@ -63,6 +74,8 @@ const RegisterFormContainer = ({ className }) => {
 					{errors.passcheck && <p className="error-message">{errors.passcheck.message}</p>}
 				</div>
 			</div>
+
+			{serverError && <p className="server-error-message">{serverError}</p>}
 
 			<button type="submit">Зарегистрироваться</button>
 
@@ -238,6 +251,13 @@ export const RegisterForm = styled(RegisterFormContainer)`
 		&:active {
 			transform: translateY(-1px);
 		}
+	}
+	.server-error-message {
+		margin: 8px 0 0;
+		color: #ff5555;
+		font-size: 12px;
+		line-height: 1.4;
+		animation: error-appearance 0.25s ease both;
 	}
 
 	.form-footer {
