@@ -1,9 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Link } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser } from '../../../../selector';
 
 import styled from 'styled-components';
 
 const UserPanelContainer = ({ className }) => {
+	const dispatch = useDispatch();
+	const { roleId, login } = useSelector(selectUser);
+	console.log('UserPanelContainer', roleId, login);
+
 	return (
 		<div className={className}>
 			<Link to={'/login'}>

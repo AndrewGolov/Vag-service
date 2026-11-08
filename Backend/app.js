@@ -41,6 +41,9 @@ app.post("/api/login", async (req, res) => {
 		res.status(500).json({error: e.message});
 	}
 })
+app.post("/api/logout", async (req, res) => {
+	res.cookie('vag_token', '', {httpOnly: true}).send({error: null})
+})
 
 
 const startServer = async () => {
