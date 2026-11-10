@@ -1,20 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Link } from 'react-router';
-import { UserPanel, NavPanel } from './components';
-
-import logo from '../../assets/logo.png';
+import { NavPanel } from './components';
+import { AuthButton } from '../Auth-button/Auth-button';
+import { LogoLink } from '../Logo-link/Logo-link';
 import styled from 'styled-components';
 
 const HeaderContainer = ({ className }) => {
 	return (
 		<header className={className}>
 			<div className="header-container">
-				<Link to="/" className="logo-link">
-					<img src={logo} alt="VAG Fan Service" className="logo" />
-					<span className="sub-logo">VAG Fan Service</span>
-				</Link>
+				<LogoLink />
 				<NavPanel />
-				<UserPanel />
+				<AuthButton />
 			</div>
 		</header>
 	);
@@ -43,29 +39,5 @@ export const Header = styled(HeaderContainer)`
 		justify-content: space-between;
 		gap: 20px;
 		padding: 0 20px;
-	}
-	.logo-link {
-		display: flex;
-		gap: 15px;
-		align-items: center;
-		font-size: 20px;
-	}
-	.sub-logo {
-		font-weight: 800;
-		background: linear-gradient(90deg, #fdb813 0%, #ed1c24 50%, #000 100%);
-		background-size: 200% 100%;
-		background-position: 0% 50%;
-		background-clip: text;
-		-webkit-background-clip: text;
-		color: transparent;
-		transition: background-position 0.8s ease;
-	}
-
-	.logo-link:hover .sub-logo {
-		background-position: 100% 50%;
-	}
-	.logo {
-		width: 40px;
-		height: 40px;
 	}
 `;

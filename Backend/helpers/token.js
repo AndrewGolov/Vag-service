@@ -1,9 +1,11 @@
 const JWT = require("jsonwebtoken");
-const JWT_KEY = process.env.JWT_SP_KEY
-
+const sign = process.env.JWT_SP_KEY
 
 module.exports = {
 	generate(data) {
-		return JWT.sign(data, JWT_KEY, {expiresIn: "48h"})
+		return JWT.sign(data, sign, {expiresIn: "48h"})
+	},
+	verify(token) {
+		return JWT.verify(token, sign)
 	}
 }

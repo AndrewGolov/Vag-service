@@ -3,12 +3,15 @@ const express = require('express')
 const app = express();
 const mongoose = require("mongoose");
 const PORT = process.env.PORT || 3001;
+const cookieParser = require("cookie-parser");
 
 const {register,login} = require('./controllers/user.js')
+const auth = require('./middleware/authenticated')
 const mapUser = require('./helpers/mapUser.js');
 
 
 app.use(express.json());
+app.use(cookieParser())
 app.use((req, res, next) => {
 	console.log('========== Входящий запрос в APP method, body ===========', req.method, req.body);
 	next()
@@ -43,6 +46,9 @@ app.post("/api/login", async (req, res) => {
 })
 app.post("/api/logout", async (req, res) => {
 	res.cookie('vag_token', '', {httpOnly: true}).send({error: null})
+})
+app.get('/api/account',auth, async (req, res) => {
+	res.send({error:null, user:mapUser(req.user)})
 })
 
 

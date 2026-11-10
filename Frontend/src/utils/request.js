@@ -4,6 +4,7 @@ export const request = (url, method, data) => {
 		headers: {
 			'Content-Type': 'application/json',
 		},
+		credentials: 'include',
 		body: JSON.stringify(data),
 	}).then((response) => response.json());
 };

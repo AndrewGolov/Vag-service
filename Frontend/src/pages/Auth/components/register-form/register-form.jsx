@@ -7,7 +7,6 @@ import { registerFormSchema } from '../utils';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { request } from '../../../../utils';
 import { setUser } from '../../../../actions';
-
 import styled from 'styled-components';
 
 const RegisterFormContainer = ({ className }) => {
