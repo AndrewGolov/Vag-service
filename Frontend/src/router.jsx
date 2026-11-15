@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { App } from './App';
-import { Home, Auth, AccPage } from './pages';
+import { Home, Auth, AccPage, Garage } from './pages';
+import { EmptyGarage, AddingCarForm } from './pages/garage/components';
 
 export const router = createBrowserRouter([
 	{
@@ -24,7 +25,17 @@ export const router = createBrowserRouter([
 				children: [
 					{
 						path: 'my-garage',
-						element: <div>Мой гараж</div>,
+						element: <Garage />,
+						children: [
+							{
+								index: true,
+								element: <EmptyGarage />,
+							},
+							{
+								path: 'add',
+								element: <AddingCarForm />,
+							},
+						],
 					},
 					{
 						path: 'entry',

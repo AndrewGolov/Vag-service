@@ -1,9 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react-refresh/only-export-components */
+
 import { useSelector } from 'react-redux';
-import { NavLink, Outlet } from 'react-router';
+import { Outlet } from 'react-router';
 import { selectUser } from '../../selector';
-import { Profile } from './components';
+import { Profile, NavigationMenu } from './components';
 import { AuthButton, LogoLink } from '../../components';
 import styled from 'styled-components';
 
@@ -17,21 +17,7 @@ const AccPageContainer = ({ className }) => {
 				<header className="header">
 					<LogoLink url="/account" />
 				</header>
-
-				<nav className="navigation">
-					<ul>
-						<li>
-							<NavLink to="/account/my-garage">Мой гараж</NavLink>
-						</li>
-						<li>
-							<NavLink to="/account/entry">Записаться</NavLink>
-						</li>
-						<li>
-							<NavLink to="/account/service">Услуги</NavLink>
-						</li>
-					</ul>
-				</nav>
-
+				<NavigationMenu />
 				<Profile />
 
 				<footer>
@@ -81,57 +67,6 @@ export const AccPage = styled(AccPageContainer)`
 		border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 	}
 
-	.navigation {
-		ul {
-			display: flex;
-			flex-direction: column;
-			gap: 8px;
-			padding: 0;
-			margin: 0;
-			list-style: none;
-		}
-
-		a {
-			position: relative;
-			display: flex;
-			align-items: center;
-
-			padding: 13px 15px;
-			border: 1px solid transparent;
-			border-radius: 6px;
-
-			color: #a5a7ad;
-			font-size: 13px;
-			font-weight: 600;
-			letter-spacing: 1px;
-			text-decoration: none;
-			transition: all 0.2s ease;
-
-			&:hover {
-				color: #fdb813;
-				background: rgba(253, 184, 19, 0.06);
-			}
-
-			&.active {
-				color: #fdb813;
-				background: linear-gradient(90deg, rgba(253, 184, 19, 0.13), rgba(253, 184, 19, 0.02));
-				border-color: rgba(253, 184, 19, 0.13);
-
-				&::before {
-					content: '';
-					position: absolute;
-					left: -1px;
-					top: 20%;
-					width: 3px;
-					height: 60%;
-					border-radius: 0 3px 3px 0;
-					background: #fdb813;
-					box-shadow: 0 0 12px rgba(253, 184, 19, 0.5);
-				}
-			}
-		}
-	}
-
 	.aside-panel footer {
 		margin-top: auto;
 		padding-top: 20px;
@@ -144,7 +79,6 @@ export const AccPage = styled(AccPageContainer)`
 		flex: 1;
 		min-width: 0;
 		min-height: 100vh;
-		padding: clamp(24px, 4vw, 55px);
 
 		background:
 			radial-gradient(ellipse at 85% 10%, rgba(253, 184, 19, 0.07), transparent 35%),
@@ -174,15 +108,6 @@ export const AccPage = styled(AccPageContainer)`
 			padding: 18px;
 			border-right: none;
 			border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-		}
-
-		.navigation ul {
-			flex-direction: row;
-			flex-wrap: wrap;
-		}
-
-		.navigation a {
-			padding: 10px;
 		}
 
 		.aside-panel footer {
