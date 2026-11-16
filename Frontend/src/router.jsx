@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { App } from './App';
 import { Home, Auth, AccPage, Garage } from './pages';
-import { EmptyGarage, AddingCarForm } from './pages/garage/components';
+import { GarageLayout, AddingCarForm } from './pages/garage/components';
 
 export const router = createBrowserRouter([
 	{
@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
 						children: [
 							{
 								index: true,
-								element: <EmptyGarage />,
+								element: <GarageLayout />,
 							},
 							{
 								path: 'add',

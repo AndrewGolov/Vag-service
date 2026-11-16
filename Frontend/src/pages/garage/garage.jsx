@@ -1,24 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useState } from 'react';
 import { Outlet } from 'react-router';
-
 import styled from 'styled-components';
 
 const GarageContainer = ({ className }) => {
-	const [garageData] = useState([]);
-
 	return (
 		<div className={className}>
 			<header className="garage-heading">
 				<h1>Мой гараж</h1>
 				<p>Ваши автомобили и история обслуживания</p>
 			</header>
-
-			{garageData.length === 0 ? (
-				<Outlet />
-			) : (
-				<div className="garage-grid">{/* TODO Карточки автомобилей */}</div>
-			)}
+			<Outlet />
 		</div>
 	);
 };
@@ -57,11 +48,5 @@ export const Garage = styled(GarageContainer)`
 			color: #92949c;
 			font-size: 14px;
 		}
-	}
-
-	.garage-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-		gap: 22px;
 	}
 `;

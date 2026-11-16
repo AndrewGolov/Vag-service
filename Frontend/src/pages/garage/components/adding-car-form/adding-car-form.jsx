@@ -2,20 +2,26 @@
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { getBrands, getModelsByBrand } from 'auto-parts-db';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 import { mapSelectOptions, getYearOptions, addingFormSchema } from './utils';
 import { request } from '../../../../utils';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { addCar } from '../../../../actions';
 import Select from 'react-select';
 import styled from 'styled-components';
 
 const AddingCarFormContainer = ({ className }) => {
 	const [serverError, setServerError] = useState(null);
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const {
 		handleSubmit,
 		control,
 		register,
 		setValue,
+		reset,
 		formState: { errors, isValid, isDirty },
 	} = useForm({
 		defaultValues: {
@@ -40,25 +46,22 @@ const AddingCarFormContainer = ({ className }) => {
 	const onSubmitForm = ({ brand, model, year, vin, regNum, bodyColor, additions }) => {
 		setServerError(null);
 		if (!isValid) return;
-		console.log({
-			brand,
-			model,
-			year,
-			vin,
-			regNum,
-			bodyColor,
-			additions,
-		});
-		request('/api/garage/add', 'POST', { brand, model, year, vin, regNum, bodyColor, additions })
-			.then((data) => {
-				console.log('------------Добавленное авто в гараж:', data);
-				//dispatch
+		request('/api/my-garage/add', 'POST', { brand, model, year, vin, regNum, bodyColor, additions })
+			.then((carData) => {
+				if (carData.error) {
+					throw new Error(carData.error);
+				}
+				dispatch(addCar(carData));
+				navigate('/account/my-garage');
+				reset();
 			})
 			.catch((error) => {
 				setServerError(error.message);
 			});
 	};
-	const isDisabled = !isDirty || !isValid; /*TODO отключение кнопки*/
+	const isDisabled =
+		!isDirty ||
+		!isValid; /*TODO отключение кнопки когда форма не валидна и отключение конпки при выполнении запроса*/
 	console.log('----------------isDisabled ----------------', isDisabled);
 
 	return (
