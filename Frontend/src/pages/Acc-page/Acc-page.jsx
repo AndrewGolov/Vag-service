@@ -1,15 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
-
 import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router';
-import { selectUser } from '../../selector';
+import { selectServerError } from '../../selector';
 import { Profile, NavigationMenu } from './components';
-import { AuthButton, LogoLink } from '../../components';
+import { AuthButton, ErrorModal, LogoLink } from '../../components';
 import styled from 'styled-components';
 
 const AccPageContainer = ({ className }) => {
-	const { login } = useSelector(selectUser);
-	console.log(login);
+	const serverError = useSelector(selectServerError);
 
 	return (
 		<div className={className}>
@@ -28,6 +26,7 @@ const AccPageContainer = ({ className }) => {
 			<main className="main-wrapper">
 				<Outlet />
 			</main>
+			{serverError && <ErrorModal />}
 		</div>
 	);
 };

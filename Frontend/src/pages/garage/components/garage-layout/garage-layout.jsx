@@ -1,41 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { request } from '../../../../utils';
-import { selectAccCars } from '../../../../selector';
-import { setCars } from '../../../../actions';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectAccCars, selectIsLoading } from '../../../../selector';
 import { EmptyGarage } from '../empty-garage/empty-garage';
 import { GarageGrid } from '../garage-grid/garage-grid';
-import { WheelLoader, ErrorModal } from '../../../../components';
+import { request } from '../../../../utils';
+import { WheelLoader } from '../../../../components';
+import { useEffect } from 'react';
+import { setCars, setServerError, setLoading, setLoaded } from '../../../../actions';
 
 export const GarageLayout = () => {
-	const [isLoading, setIsLoading] = useState(true);
-	const [serverError, setServerError] = useState(null);
-
-	const dispatch = useDispatch();
 	const garageData = useSelector(selectAccCars);
+	const dispatch = useDispatch();
+	const isLoading = useSelector(selectIsLoading);
+
 	useEffect(() => {
+		dispatch(setLoading());
 		request('/api/account/my-garage')
 			.then(({ error, cars }) => {
 				if (error) {
 					throw new Error(error);
 				}
 				dispatch(setCars(cars));
-				setIsLoading(false);
 			})
 			.catch((e) => {
 				console.log(e);
-				setServerError('Ошибка сервера, повторите попытку позже');
+				dispatch(setServerError('Ошибка сервера, повторите попытку позже'));
 			})
-			.finally(() => setIsLoading(false));
+			.finally(() => dispatch(setLoaded()));
 	}, [dispatch]);
-	if (isLoading) return <WheelLoader />;
 
-	return (
-		<>
-			{!serverError && (
-				<div>{garageData.length === 0 ? <EmptyGarage /> : <GarageGrid carsData={garageData} />}</div>
-			)}
-			<ErrorModal message={serverError} isOpen={!!serverError} onClose={() => setServerError(null)} />
-		</>
-	);
+	if (isLoading) return <WheelLoader />;
+	return <div>{garageData.length === 0 ? <EmptyGarage /> : <GarageGrid carsData={garageData} />}</div>;
 };

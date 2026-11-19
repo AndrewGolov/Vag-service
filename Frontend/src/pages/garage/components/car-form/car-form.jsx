@@ -1,23 +1,21 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { getBrands, getModelsByBrand } from 'auto-parts-db';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
 import { mapSelectOptions, getYearOptions, addingFormSchema, saveCar } from './utils';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { addCar, updateCar } from '../../../../actions';
-import { selectAccCars } from '../../../../selector';
+import { addCar, updateCar, setServerError, setLoading, setLoaded } from '../../../../actions';
+import { selectAccCars, selectIsLoading } from '../../../../selector';
 import Select from 'react-select';
 import styled from 'styled-components';
 
 const CarFormContainer = ({ className }) => {
-	const [serverError, setServerError] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
 	const cars = useSelector(selectAccCars);
+	const isLoading = useSelector(selectIsLoading);
 	const { id } = useParams();
 	const isEditMode = !!id;
 	const editCar = cars.find((car) => car.id === id);
@@ -52,8 +50,7 @@ const CarFormContainer = ({ className }) => {
 	const onSubmitForm = ({ brand, model, year, vin, regNum, bodyColor, additions }) => {
 		if (!isValid) return;
 		const carData = { brand, model, year, vin, regNum, bodyColor, additions };
-		setIsLoading(true);
-		setServerError(null);
+		dispatch(setLoading());
 
 		const responseData = isEditMode ? saveCar(carData, id) : saveCar(carData);
 		responseData
@@ -65,10 +62,11 @@ const CarFormContainer = ({ className }) => {
 				navigate('/account/my-garage');
 				reset();
 			})
-			.catch((error) => {
-				setServerError(error.message);
+			.catch((e) => {
+				console.log(e);
+				dispatch(setServerError('Ошибка отправки формы'));
 			})
-			.finally(() => setIsLoading(false));
+			.finally(() => dispatch(setLoaded()));
 	};
 
 	useEffect(() => {
@@ -76,7 +74,7 @@ const CarFormContainer = ({ className }) => {
 		reset(editCar);
 	}, [cars, reset, editCar, isEditMode]);
 
-	/*TODO отключение кнопки когда форма не валидна и отключение конпки при выполнении запроса*/
+	const isSubmitDisabled = !isValid || !isDirty || isLoading;
 
 	return (
 		<form className={className} onSubmit={handleSubmit(onSubmitForm)}>
@@ -200,9 +198,7 @@ const CarFormContainer = ({ className }) => {
 						</label>
 					</div>
 
-					<p className="server-error-message">{serverError || ' '}</p>
-
-					<button type="submit" disabled={isLoading}>
+					<button type="submit" disabled={isSubmitDisabled}>
 						{isEditMode ? 'Сохранить изменения' : 'Добавить в гараж'}
 					</button>
 				</div>
@@ -525,19 +521,11 @@ export const CarForm = styled(CarFormContainer)`
 		text-transform: none;
 	}
 
-	.server-error-message {
-		min-height: 18px;
-		margin: 0;
-
-		color: #ff5555;
-		font-size: 13px;
-		line-height: 18px;
-		text-align: center;
-	}
-
 	.full-width {
 		grid-column: 1 / -1;
 	}
+
+	/* Submit button */
 
 	button {
 		display: flex;
@@ -552,7 +540,7 @@ export const CarForm = styled(CarFormContainer)`
 		border: 2px solid #fdb813;
 		border-radius: 7px;
 
-		background: rgba(15, 16, 20, 0.65);
+		background: linear-gradient(135deg, rgba(253, 184, 19, 0.08), rgba(15, 16, 20, 0.8));
 		color: #fdb813;
 
 		font-size: 15px;
@@ -565,13 +553,38 @@ export const CarForm = styled(CarFormContainer)`
 			color 0.25s ease,
 			border-color 0.25s ease,
 			background 0.25s ease,
-			box-shadow 0.25s ease;
+			box-shadow 0.25s ease,
+			opacity 0.25s ease;
 
-		&:hover {
+		&:hover:not(:disabled) {
 			color: #ed1c24;
 			border-color: #ed1c24;
 			background: rgba(237, 28, 36, 0.09);
 			box-shadow: 0 0 20px rgba(237, 28, 36, 0.17);
+		}
+
+		&:active:not(:disabled) {
+			transform: scale(0.99);
+		}
+
+		&:focus-visible {
+			outline: 2px solid #fdb813;
+			outline-offset: 4px;
+		}
+
+		/* Disabled */
+
+		&:disabled {
+			border-color: rgba(160, 163, 173, 0.2);
+			background: linear-gradient(135deg, rgba(75, 77, 85, 0.25), rgba(30, 31, 37, 0.65));
+
+			color: #777982;
+			box-shadow: none;
+
+			cursor: not-allowed;
+			opacity: 0.65;
+			transform: none;
+			filter: grayscale(0.4);
 		}
 	}
 
@@ -616,6 +629,12 @@ export const CarForm = styled(CarFormContainer)`
 
 		.form-heading p {
 			font-size: 12px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		button {
+			transition: none;
 		}
 	}
 `;

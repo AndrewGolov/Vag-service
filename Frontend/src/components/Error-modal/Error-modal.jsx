@@ -1,11 +1,18 @@
 /* eslint-disable react-refresh/only-export-components */
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { FiAlertCircle } from 'react-icons/fi';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectServerError } from '../../selector';
+import { resetServerError } from '../../actions';
 import styled from 'styled-components';
 
-const ErrorModalContainer = ({ className, isOpen, message, onClose }) => {
+const ErrorModalContainer = ({ className }) => {
+	const dispatch = useDispatch();
+	const serverError = useSelector(selectServerError);
+	const onClose = useCallback(() => dispatch(resetServerError()), [dispatch]);
+
 	useEffect(() => {
-		if (!isOpen) return;
+		if (!serverError) return;
 
 		const handleKeyDown = (event) => {
 			if (event.key === 'Escape') {
@@ -18,9 +25,9 @@ const ErrorModalContainer = ({ className, isOpen, message, onClose }) => {
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
-	}, [isOpen, onClose]);
+	}, [serverError, onClose]);
 
-	if (!isOpen) return null;
+	if (!serverError) return null;
 
 	return (
 		<div className={className}>
@@ -39,7 +46,7 @@ const ErrorModalContainer = ({ className, isOpen, message, onClose }) => {
 					<div className="error-content">
 						<h2 id="error-title">Произошла ошибка</h2>
 
-						<p id="error-message">{message || 'Не удалось выполнить операцию. Попробуйте ещё раз.'}</p>
+						<p id="error-message">{serverError || 'Не удалось выполнить операцию. Попробуйте ещё раз.'}</p>
 					</div>
 
 					<button type="button" className="confirm-button" onClick={onClose} autoFocus>

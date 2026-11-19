@@ -3,7 +3,8 @@ import { ACTION_TYPE } from '../actions';
 const initialUserState = {
 	cars: [],
 	serverError: null,
-	modalIsOpen: false,
+	isLoading: false,
+	modal: { isOpen: false, text: '' },
 };
 
 export const accReducer = (state = initialUserState, { type, payload }) => {
@@ -24,6 +25,36 @@ export const accReducer = (state = initialUserState, { type, payload }) => {
 			return {
 				...state,
 				cars: state.cars.map((car) => (car.id === payload.id ? payload : car)),
+			};
+		}
+		case ACTION_TYPE.DELETE_CAR: {
+			return {
+				...state,
+				cars: state.cars.filter((car) => car.id !== payload),
+			};
+		}
+		case ACTION_TYPE.SET_ERROR_SERVER: {
+			return {
+				...state,
+				serverError: payload,
+			};
+		}
+		case ACTION_TYPE.RESET_ERROR_SERVER: {
+			return {
+				...state,
+				serverError: null,
+			};
+		}
+		case ACTION_TYPE.SET_IS_LOADING: {
+			return {
+				...state,
+				isLoading: true,
+			};
+		}
+		case ACTION_TYPE.SET_LOADED: {
+			return {
+				...state,
+				isLoading: false,
 			};
 		}
 

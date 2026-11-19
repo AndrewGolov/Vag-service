@@ -4,3 +4,8 @@ export * from './logout';
 export * from './add_car';
 export * from './update-car';
 export * from './set-cars';
+export * from './set-server-error';
+export * from './reset-server-error';
+export * from './set-loading';
+export * from './set-loaded';
+export * from './delete-car';
