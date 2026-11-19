@@ -2,6 +2,8 @@ import { ACTION_TYPE } from '../actions';
 
 const initialUserState = {
 	cars: [],
+	serverError: null,
+	modalIsOpen: false,
 };
 
 export const accReducer = (state = initialUserState, { type, payload }) => {
@@ -16,6 +18,12 @@ export const accReducer = (state = initialUserState, { type, payload }) => {
 			return {
 				...state,
 				cars: payload,
+			};
+		}
+		case ACTION_TYPE.UPDATE_CAR: {
+			return {
+				...state,
+				cars: state.cars.map((car) => (car.id === payload.id ? payload : car)),
 			};
 		}
 

@@ -12,10 +12,14 @@ async function getCars(userId) {
 	return await Car.find({owner:userId});
 }
 
-async function editCar(id,data) {
-	return await Car.findByIdAndUpdate(id,data,{returnDocument:'after'});
+async function editCar(userId,id,data) {
+	return await Car.findOneAndReplace({_id:id, owner:userId}, {...data, owner:userId},{returnDocument:'after'}).populate('owner')
+}
+
+async function deleteCar(id) {
+	await Car.findOneAndDelete({_id:id}).populate('owner')
 }
 
 module.exports = {
-	createCar,editCar,getCars
+	createCar,editCar,getCars,deleteCar
 }

@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { App } from './App';
 import { Home, Auth, AccPage, Garage } from './pages';
-import { GarageLayout, AddingCarForm } from './pages/garage/components';
+import { GarageLayout, CarForm } from './pages/garage/components';
 
 export const router = createBrowserRouter([
 	{
@@ -33,7 +33,11 @@ export const router = createBrowserRouter([
 							},
 							{
 								path: 'add',
-								element: <AddingCarForm />,
+								element: <CarForm />,
+							},
+							{
+								path: ':id',
+								element: <CarForm />,
 							},
 						],
 					},

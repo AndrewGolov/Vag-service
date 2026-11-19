@@ -1,20 +1,26 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useForm, useWatch, Controller } from 'react-hook-form';
 import { getBrands, getModelsByBrand } from 'auto-parts-db';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router';
-import { mapSelectOptions, getYearOptions, addingFormSchema } from './utils';
-import { request } from '../../../../utils';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router';
+import { mapSelectOptions, getYearOptions, addingFormSchema, saveCar } from './utils';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { addCar } from '../../../../actions';
+import { addCar, updateCar } from '../../../../actions';
+import { selectAccCars } from '../../../../selector';
 import Select from 'react-select';
 import styled from 'styled-components';
 
-const AddingCarFormContainer = ({ className }) => {
+const CarFormContainer = ({ className }) => {
 	const [serverError, setServerError] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const cars = useSelector(selectAccCars);
+	const { id } = useParams();
+	const isEditMode = !!id;
+	const editCar = cars.find((car) => car.id === id);
 
 	const {
 		handleSubmit,
@@ -38,31 +44,39 @@ const AddingCarFormContainer = ({ className }) => {
 	});
 
 	const selectedBrand = useWatch({ control, name: 'brand' });
-
 	const optionsBrand = mapSelectOptions(getBrands());
-	const optionsModel = mapSelectOptions(getModelsByBrand(selectedBrand));
+	const optionsModel = selectedBrand ? mapSelectOptions(getModelsByBrand(selectedBrand)) : [];
+
 	const optionsYear = getYearOptions();
 
 	const onSubmitForm = ({ brand, model, year, vin, regNum, bodyColor, additions }) => {
-		setServerError(null);
 		if (!isValid) return;
-		request('/api/my-garage/add', 'POST', { brand, model, year, vin, regNum, bodyColor, additions })
-			.then((carData) => {
-				if (carData.error) {
-					throw new Error(carData.error);
+		const carData = { brand, model, year, vin, regNum, bodyColor, additions };
+		setIsLoading(true);
+		setServerError(null);
+
+		const responseData = isEditMode ? saveCar(carData, id) : saveCar(carData);
+		responseData
+			.then((respData) => {
+				if (respData.error) {
+					throw new Error(respData.error);
 				}
-				dispatch(addCar(carData));
+				isEditMode ? dispatch(updateCar(respData)) : dispatch(addCar(respData));
 				navigate('/account/my-garage');
 				reset();
 			})
 			.catch((error) => {
 				setServerError(error.message);
-			});
+			})
+			.finally(() => setIsLoading(false));
 	};
-	const isDisabled =
-		!isDirty ||
-		!isValid; /*TODO отключение кнопки когда форма не валидна и отключение конпки при выполнении запроса*/
-	console.log('----------------isDisabled ----------------', isDisabled);
+
+	useEffect(() => {
+		if (!cars || !isEditMode) return;
+		reset(editCar);
+	}, [cars, reset, editCar, isEditMode]);
+
+	/*TODO отключение кнопки когда форма не валидна и отключение конпки при выполнении запроса*/
 
 	return (
 		<form className={className} onSubmit={handleSubmit(onSubmitForm)}>
@@ -188,14 +202,16 @@ const AddingCarFormContainer = ({ className }) => {
 
 					<p className="server-error-message">{serverError || ' '}</p>
 
-					<button type="submit">Добавить в гараж</button>
+					<button type="submit" disabled={isLoading}>
+						{isEditMode ? 'Сохранить изменения' : 'Добавить в гараж'}
+					</button>
 				</div>
 			</div>
 		</form>
 	);
 };
 
-export const AddingCarForm = styled(AddingCarFormContainer)`
+export const CarForm = styled(CarFormContainer)`
 	position: relative;
 	display: flex;
 	align-items: center;

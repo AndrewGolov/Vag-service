@@ -2,16 +2,22 @@
 import { Link } from 'react-router';
 import { FaCarSide } from 'react-icons/fa';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
+
 import styled from 'styled-components';
 
-const GarageGridContainer = ({ className, carsData = [], onEdit, onDelete }) => {
+const GarageGridContainer = ({ className, carsData = [] }) => {
+
+	const onRemoveCar = () => {
+
+	}
+
 	return (
 		<div className={className}>
 			{carsData.map((car) => {
-				const { _id, brand, model, year, vin, regNum, bodyColor, additions } = car;
+				const { id, brand, model, year, vin, regNum, bodyColor, additions } = car;
 
 				return (
-					<article className="car-item" key={_id}>
+					<article className="car-item" key={id}>
 						<div className="car-visual">
 							{/* TODO В дальнейшем здесь будет логотип или изображение автомобиля */}
 							<FaCarSide className="car-placeholder" />
@@ -46,23 +52,22 @@ const GarageGridContainer = ({ className, carsData = [], onEdit, onDelete }) => 
 							{additions && <p className="car-additions">{additions}</p>}
 
 							<div className="car-actions">
-								<button
-									type="button"
+								<Link
+									to={`/account/my-garage/${id}`}
 									className="action-button edit-button"
-									onClick={() => onEdit(car)}
 									title="Редактировать автомобиль"
 									aria-label={`Редактировать ${brand} ${model}`}
 								>
 									<FiEdit2 />
 									<span>Изменить</span>
-								</button>
+								</Link>
 
 								<button
 									type="button"
 									className="action-button delete-button"
-									onClick={() => onDelete(car)}
 									title="Удалить автомобиль"
 									aria-label={`Удалить ${brand} ${model}`}
+									onClick={() => onRemoveCar(id)}
 								>
 									<FiTrash2 />
 								</button>

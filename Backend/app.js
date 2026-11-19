@@ -8,13 +8,13 @@ const cookieParser = require("cookie-parser");
 const auth = require('./middleware/authenticated')
 const mapUser = require('./helpers/mapUser.js');
 const mapCars = require('./helpers/mapCars.js');
-const {register,login} = require('./controllers/user.js')
-const {createCar, getCars} = require("./controllers/car");
+const {register, login} = require('./controllers/user.js')
+const {createCar, getCars, editCar,deleteCar} = require("./controllers/car");
 
 app.use(express.json());
 app.use(cookieParser())
 app.use((req, res, next) => {
-	console.log('========== Входящий запрос в APP method, body ===========', req.method, req.body);
+	console.log('========== Входящий запрос в APP method, body, req.params ===========', req.method, req.body, req.params);
 	next()
 })
 
@@ -48,35 +48,46 @@ app.post("/api/login", async (req, res) => {
 app.post("/api/logout", async (req, res) => {
 	res.cookie('vag_token', '', {httpOnly: true}).send({error: null})
 })
-app.get('/api/account',auth, async (req, res) => {
-	res.send({error:null, user:mapUser(req.user)})
+app.get('/api/account', auth, async (req, res) => {
+	res.send({error: null, user: mapUser(req.user)})
 })
-app.get('/api/account/my-garage',auth, async (req, res) => {
-	try{
+app.get('/api/account/my-garage', auth, async (req, res) => {
+	try {
 		const carsDb = await getCars(req.user.id);
-		res.send({error:null, cars:mapCars(carsDb)})
+		res.send({error: null, cars: mapCars(carsDb)})
 	} catch (e) {
 		console.log(e.message, e.code)
 		res.status(500).json({error: 'Ошибка сервера'});
 	}
 })
-
 app.post('/api/my-garage/add', auth, async (req, res) => {
-	try{
-		const newCar = await createCar(req.user.id,req.body)
+	try {
+		const newCar = await createCar(req.user.id, req.body)
 		res.send({error: null, carData: newCar})
 	} catch (e) {
 		console.log(e.message, e.code)
 		res.status(500).json({error: 'Не удалось добавить автомобиль в гараже'});
 	}
 })
-app.post('/api/my-garage/:id ', auth, async (req, res) => {
-	try{
-		const newCar = await createCar(req.user.id,req.body)
-		res.send({error: null, carData: newCar})
+app.patch('/api/my-garage/:id', auth, async (req, res) => {
+	try {
+		const updatedCar = await editCar(req.user.id, req.params.id, req.body)
+		res.send({error: null, carData: updatedCar})
+
 	} catch (e) {
 		console.log(e.message, e.code)
-		res.status(500).json({error: 'Не удалось добавить автомобиль в гараже'});
+		res.status(500).json({error: 'Не удалось сохранить новые данные'});
+	}
+})
+app.delete('/api/my-garage/:id', auth, async (req, res) => {
+	try {
+		await deleteCar( req.params.id, req.body)
+		console.log(`Автомобиль с ID ${req.params.id} удален из БД`)
+		res.send({error: null})
+
+	} catch (e) {
+		console.log(e.message, e.code)
+		res.status(500).json({error: 'Не удалось удалить автомобиль'});
 	}
 })
 
