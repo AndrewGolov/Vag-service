@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Outlet } from 'react-router';
 import { selectServerError } from '../../selector';
 import { Profile, NavigationMenu } from './components';
-import { AuthButton, ErrorModal, LogoLink } from '../../components';
+import { AuthButton, ErrorModal, LogoLink, Modal } from '../../components';
 import styled from 'styled-components';
 
 const AccPageContainer = ({ className }) => {
@@ -26,6 +26,7 @@ const AccPageContainer = ({ className }) => {
 			<main className="main-wrapper">
 				<Outlet />
 			</main>
+			<Modal />
 			{serverError && <ErrorModal />}
 		</div>
 	);

@@ -3,26 +3,35 @@ import { Link } from 'react-router';
 import { request } from '../../../../utils';
 import { FaCarSide } from 'react-icons/fa';
 import { useDispatch } from 'react-redux';
-import { setLoading, setLoaded, deleteCar, setServerError } from '../../../../actions';
+import { setLoading, setLoaded, deleteCar, setServerError, openModal, closeModal } from '../../../../actions';
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi';
 import styled from 'styled-components';
 
 const GarageGridContainer = ({ className, carsData = [] }) => {
 	const dispatch = useDispatch();
 	const onRemoveCar = (id) => {
-		dispatch(setLoading());
-		request(`/api/my-garage/${id}`, 'DELETE')
-			.then(({ error }) => {
-				if (error) {
-					throw new Error(error);
-				}
-				dispatch(deleteCar(id));
-			})
-			.catch((e) => {
-				console.log(e);
-				dispatch(setServerError('Ошибка сервера, повторите попытку позже'));
-			})
-			.finally(() => dispatch(setLoaded()));
+		dispatch(
+			openModal({
+				text: 'Точно удалить авто из гаража?',
+				onConfirm: () => {
+					dispatch(closeModal());
+					dispatch(setLoading());
+					request(`/api/my-garage/${id}`, 'DELETE')
+						.then(({ error }) => {
+							if (error) {
+								throw new Error(error);
+							}
+							dispatch(deleteCar(id));
+						})
+						.catch((e) => {
+							console.log(e);
+							dispatch(setServerError('Ошибка сервера, повторите попытку позже'));
+						})
+						.finally(() => dispatch(setLoaded()));
+				},
+				onCancel: () => dispatch(closeModal()),
+			}),
+		);
 	};
 
 	return (

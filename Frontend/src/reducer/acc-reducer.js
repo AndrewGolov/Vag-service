@@ -1,13 +1,13 @@
 import { ACTION_TYPE } from '../actions';
 
-const initialUserState = {
+const initialAccState = {
 	cars: [],
 	serverError: null,
 	isLoading: false,
 	modal: { isOpen: false, text: '' },
 };
 
-export const accReducer = (state = initialUserState, { type, payload }) => {
+export const accReducer = (state = initialAccState, { type, payload }) => {
 	switch (type) {
 		case ACTION_TYPE.ADD_CAR_ACC_DATA: {
 			return {
@@ -55,6 +55,22 @@ export const accReducer = (state = initialUserState, { type, payload }) => {
 			return {
 				...state,
 				isLoading: false,
+			};
+		}
+		case ACTION_TYPE.OPEN_MODAL: {
+			return {
+				...state,
+				modal: {
+					...state.modal,
+					...payload,
+					isOpen: true,
+				},
+			};
+		}
+		case ACTION_TYPE.CLOSE_MODAL: {
+			return {
+				...state,
+				modal: initialAccState.modal,
 			};
 		}
 

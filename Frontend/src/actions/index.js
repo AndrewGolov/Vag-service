@@ -9,3 +9,5 @@ export * from './reset-server-error';
 export * from './set-loading';
 export * from './set-loaded';
 export * from './delete-car';
+export * from './open-modal';
+export * from './close-modal';
