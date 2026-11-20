@@ -1,6 +1,6 @@
 import { createBrowserRouter } from 'react-router';
 import { App } from './App';
-import { Home, Auth, AccPage, Garage } from './pages';
+import { Home, Auth, AccPage, Garage, Calendar } from './pages';
 import { GarageLayout, CarForm } from './pages/garage/components';
 
 export const router = createBrowserRouter([
@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: 'entry',
-						element: <div>Календарь</div>,
+						element: <Calendar />,
 					},
 
 					{
