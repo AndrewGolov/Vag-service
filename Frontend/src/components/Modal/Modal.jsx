@@ -13,8 +13,8 @@ const ModalContainer = ({ className }) => {
 	const isOpen = useSelector(selectModalIsOpen);
 
 	const handleEscape = useCallback(
-		(event) => {
-			if (event.key === 'Escape') {
+		({ key }) => {
+			if (key === 'Escape') {
 				onCancel?.();
 			}
 		},
