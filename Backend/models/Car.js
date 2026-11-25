@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const CarSchema = mongoose.Schema({
+const {Schema, model} = require('mongoose')
+const CarSchema = new Schema({
 	brand: {
 		type: String,
 		required: true,
@@ -8,25 +8,25 @@ const CarSchema = mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	year:{
+	year: {
 		type: String,
 	},
-	vin:{
-		type: String,
-		uppercase: true,
-	},
-	regNum:{
+	vin: {
 		type: String,
 		uppercase: true,
 	},
-	bodyColor:{
+	regNum: {
+		type: String,
+		uppercase: true,
+	},
+	bodyColor: {
 		type: String,
 	},
-	additions:{
+	additions: {
 		type: String,
 	},
-	owner:{type:mongoose.Schema.Types.ObjectId, ref:'User'}
-},{timestamps:true})
+	owner: {type: Schema.Types.ObjectId, ref: 'User'}
+}, {timestamps: true})
 
-const Car = mongoose.model('Car', CarSchema)
+const Car = model('Car', CarSchema)
 module.exports = Car

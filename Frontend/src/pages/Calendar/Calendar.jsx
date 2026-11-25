@@ -4,24 +4,27 @@ import ruLocale from '@fullcalendar/react/locales/ru';
 import '@fullcalendar/react/skeleton.css';
 import '@fullcalendar/react/themes/forma/theme.css';
 import '@fullcalendar/react/themes/forma/palettes/red.css';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectIsLoading, selectScheduleSlotDuration, selectScheduleWorkTime } from '../../selector';
+import { request } from '../../utils';
+import { setLoaded, setLoading, setSchedule, setServerError } from '../../actions';
+import { WheelLoader } from '../../components';
 import { calendarPlugins, getDateKey } from './utils';
 import { SlotsModal } from './components';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
-const slotsArrData = [{ time: '9:00' }, { time: '10:00' }, { time: '11:00' }, { time: '12:00' }, { time: '13:00' }];
 
 const CalendarContainer = ({ className }) => {
 	const [selectedDate, setSelectedDate] = useState(null);
 	const [slotsModalIsOpen, setSlotsModalIsOpen] = useState(false);
-
 	const dispatch = useDispatch();
+	const isLoading = useSelector(selectIsLoading);
+	const workTimeData = useSelector(selectScheduleWorkTime);
+	const slotDuration = useSelector(selectScheduleSlotDuration);
 
-	const handleDateClick = ({ dateStr }) => {
-		setSelectedDate(dateStr);
-		setSlotsModalIsOpen(true);
-	};
+	console.log('---------workTimeData-------', workTimeData);
+	console.log('--------------isLoading------------', isLoading);
+	console.log('--------------------------slotDuration-----------------------', slotDuration);
 
 	const getDayClass = ({ date, isPast, isToday, isOther }) => {
 		return [
@@ -34,6 +37,25 @@ const CalendarContainer = ({ className }) => {
 			.filter(Boolean)
 			.join(' ');
 	};
+
+	const handleDateClick = ({ dateStr }) => {
+		setSelectedDate(dateStr);
+		setSlotsModalIsOpen(true);
+	};
+
+	useEffect(() => {
+		dispatch(setLoading());
+		request('/api/account/schedule')
+			.then(({ error, schedule }) => {
+				if (error) {
+					dispatch(setServerError(error));
+					return;
+				}
+				dispatch(setSchedule(schedule));
+			})
+			.finally(() => dispatch(setLoaded()));
+	}, [dispatch]);
+	if (isLoading) return <WheelLoader />;
 
 	return (
 		<div className={className}>
@@ -67,11 +89,7 @@ const CalendarContainer = ({ className }) => {
 				fixedWeekCount={false}
 				showNonCurrentDates={false}
 			/>
-			<SlotsModal
-				isOpen={slotsModalIsOpen}
-				onCancel={() => setSlotsModalIsOpen(false)}
-				slotsData={slotsArrData}
-			/>
+			<SlotsModal isOpen={slotsModalIsOpen} onCancel={() => setSlotsModalIsOpen(false)} />
 		</div>
 	);
 };

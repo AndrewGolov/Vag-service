@@ -1,7 +1,6 @@
-const mongoose = require('mongoose')
+const {Schema, model} = require("mongoose");
 const ROLES = require('../constants/roles.js')
-const {Schema} = require("mongoose");
-const UserSchema = mongoose.Schema({
+const UserSchema = new Schema({
 	login: {
 		type: String,
 		required: true,
@@ -18,8 +17,8 @@ const UserSchema = mongoose.Schema({
 		default: ROLES.CLIENT,
 	},
 
-	cars:[{type:mongoose.Schema.Types.ObjectId, ref:'car'}]
+	cars:[{type:Schema.Types.ObjectId, ref:'car'}]
 },{timestamps:true})
 
-const User = mongoose.model('User', UserSchema)
+const User = model('User', UserSchema)
 module.exports = User

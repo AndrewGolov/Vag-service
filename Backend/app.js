@@ -8,8 +8,11 @@ const cookieParser = require("cookie-parser");
 const auth = require('./middleware/authenticated')
 const mapUser = require('./helpers/mapUser.js');
 const mapCars = require('./helpers/mapCars.js');
+const mapSchedule = require('./helpers/mapSchedule.js');
 const {register, login} = require('./controllers/user.js')
-const {createCar, getCars, editCar,deleteCar} = require("./controllers/car");
+const {createCar, getCars, editCar, deleteCar} = require("./controllers/car");
+const {getSchedule} = require('./controllers/schedule');
+
 
 app.use(express.json());
 app.use(cookieParser())
@@ -81,13 +84,22 @@ app.patch('/api/my-garage/:id', auth, async (req, res) => {
 })
 app.delete('/api/my-garage/:id', auth, async (req, res) => {
 	try {
-		await deleteCar( req.params.id, req.body)
+		await deleteCar(req.params.id, req.body)
 		console.log(`Автомобиль с ID ${req.params.id} удален из БД`)
 		res.send({error: null})
 
 	} catch (e) {
 		console.log(e.message, e.code)
 		res.status(500).json({error: 'Не удалось удалить автомобиль'});
+	}
+})
+app.get('/api/account/schedule', auth, async (req, res) => {
+	try {
+		const scheduleData = await getSchedule();
+		res.send({error: null, schedule: mapSchedule(scheduleData)})
+	} catch (e) {
+		console.log(e.message, e.code)
+		res.status(500).json({error: 'Ошибка сервера'});
 	}
 })
 

@@ -1,1 +1,1 @@
-export const selectIsLoading = (state) => state.acc.isLoading;
+export const selectIsLoading = ({ acc }) => acc.isLoading;

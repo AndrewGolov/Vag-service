@@ -1,1 +1,1 @@
-export const selectModalText = (state) => state.acc.modal.text;
+export const selectModalText = ({ acc }) => acc.modal.text;

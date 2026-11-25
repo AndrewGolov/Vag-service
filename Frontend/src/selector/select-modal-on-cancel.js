@@ -1,1 +1,1 @@
-export const selectModalOnCancel = (state) => state.acc.modal.onCancel;
+export const selectModalOnCancel = ({ acc }) => acc.modal.onCancel;

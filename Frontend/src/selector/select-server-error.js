@@ -1,1 +1,1 @@
-export const selectServerError = (state) => state.acc.serverError;
+export const selectServerError = ({ acc }) => acc.serverError;

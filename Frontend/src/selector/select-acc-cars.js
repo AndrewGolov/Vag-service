@@ -1,1 +1,1 @@
-export const selectAccCars = (state) => state.acc.cars;
+export const selectAccCars = ({ acc }) => acc.cars;

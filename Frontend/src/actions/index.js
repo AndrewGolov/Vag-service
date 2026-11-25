@@ -11,3 +11,4 @@ export * from './set-loaded';
 export * from './delete-car';
 export * from './open-modal';
 export * from './close-modal';
+export * from './set-schedule';
